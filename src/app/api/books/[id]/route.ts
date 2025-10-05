@@ -14,7 +14,7 @@ async function getUserFromToken(token: string | null) {
 // DELETE /api/books/:id → delete a book belonging to the logged-in user
 export async function DELETE(
   request: NextRequest,
-  context: { params: { id: string } } // ✅ use 'context', not destructured { params }
+  context: { params: Promise<{ id: string }> } // ✅ fix: params is now a Promise
 ) {
   const authHeader = request.headers.get("Authorization") || "";
   const token = authHeader.replace("Bearer ", "") || null;
@@ -22,7 +22,7 @@ export async function DELETE(
   const user = await getUserFromToken(token);
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const { id } = context.params; // ✅ access id from context.params
+  const { id } = await context.params; // ✅ fix: await params
 
   const { error } = await supabaseAdmin
     .from("books")
@@ -38,7 +38,7 @@ export async function DELETE(
 // PATCH /api/books/:id → update status of a book belonging to the logged-in user
 export async function PATCH(
   request: NextRequest,
-  context: { params: { id: string } } // ✅ same fix as DELETE
+  context: { params: Promise<{ id: string }> } // ✅ fix: params is now a Promise
 ) {
   const authHeader = request.headers.get("Authorization") || "";
   const token = authHeader.replace("Bearer ", "") || null;
@@ -46,7 +46,7 @@ export async function PATCH(
   const user = await getUserFromToken(token);
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const { id } = context.params; // ✅ access id from context.params
+  const { id } = await context.params; // ✅ fix: await params
 
   const body = await request.json().catch(() => ({}));
   const { status } = body;
