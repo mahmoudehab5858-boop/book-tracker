@@ -12,14 +12,17 @@ async function getUserFromToken(token: string | null) {
 }
 
 // DELETE /api/books/:id → delete a book belonging to the logged-in user
-export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {
-  const authHeader = req.headers.get("Authorization") || "";
+export async function DELETE(
+  request: NextRequest,
+  context: { params: { id: string } } // ✅ use 'context', not destructured { params }
+) {
+  const authHeader = request.headers.get("Authorization") || "";
   const token = authHeader.replace("Bearer ", "") || null;
 
   const user = await getUserFromToken(token);
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const { id } = params;
+  const { id } = context.params; // ✅ access id from context.params
 
   const { error } = await supabaseAdmin
     .from("books")
@@ -33,16 +36,19 @@ export async function DELETE(req: NextRequest, { params }: { params: { id: strin
 }
 
 // PATCH /api/books/:id → update status of a book belonging to the logged-in user
-export async function PATCH(req: NextRequest, { params }: { params: { id: string } }) {
-  const authHeader = req.headers.get("Authorization") || "";
+export async function PATCH(
+  request: NextRequest,
+  context: { params: { id: string } } // ✅ same fix as DELETE
+) {
+  const authHeader = request.headers.get("Authorization") || "";
   const token = authHeader.replace("Bearer ", "") || null;
 
   const user = await getUserFromToken(token);
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const { id } = params;
+  const { id } = context.params; // ✅ access id from context.params
 
-  const body = await req.json().catch(() => ({}));
+  const body = await request.json().catch(() => ({}));
   const { status } = body;
 
   const VALID_STATUSES = ["reading", "completed", "wishlist"];
