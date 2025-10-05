@@ -1,0 +1,16 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\.next",
+    "\\.next\\server",
+    "\\.next\\server\\chunks",
+    "\\.next\\static",
+    "\\.next\\static\\development",
+    "\\.next\\static\\media",
+    "\\.next\\types",
+    "\\public",
+    "\\src",
+    "\\src\\app"
+  ],
+  "PreviewInSolutionExplorer": false
+}
